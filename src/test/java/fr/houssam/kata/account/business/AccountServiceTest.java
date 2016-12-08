@@ -1,6 +1,7 @@
 package fr.houssam.kata.account.business;
 
 import fr.houssam.kata.account.domain.Account;
+import fr.houssam.kata.account.domain.Amount;
 import fr.houssam.kata.account.domain.Customer;
 import fr.houssam.kata.account.repository.AccountRepository;
 import org.junit.Test;
@@ -47,7 +48,7 @@ public class AccountServiceTest {
         doReturn(initialAccount).when(accountRepository).findByNumero("10025135");
         doReturn(updatedAccount).when(accountRepository).save(updatedAccount);
 
-        Account accountWithNewDeposit = accountService.depose(100L, "10025135");
+        Account accountWithNewDeposit = accountService.depose(new Amount(100L), "10025135");
 
         verify(accountRepository, times(1)).findByNumero("10025135");
         verify(accountRepository, times(1)).save(Mockito.any(Account.class));
