@@ -1,6 +1,7 @@
 package fr.houssam.kata.account.repository;
 
 import fr.houssam.kata.account.domain.Account;
+import fr.houssam.kata.account.domain.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,4 +12,6 @@ import org.springframework.stereotype.Repository;
 public interface AccountRepository extends JpaRepository<Account, Long> {
 
     Account findByNumero(String numero);
+
+    Account findByCustomer(Customer customer);
 }
