@@ -6,6 +6,8 @@ import fr.houssam.kata.account.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 /**
  * Created by ghazala on 30/11/16.
  */
@@ -15,14 +17,16 @@ public class AccountService {
     @Autowired
     private AccountRepository accountRepository;
 
-    public Account depose(Amount deposit, String accountNumero) {
-        Account byNumero = accountRepository.findByNumero(accountNumero);
-
-        Account accountToUpdate = Account.builder().id(byNumero.getId())
-                .solde(byNumero.getSolde() + deposit.getValue())
-                .numero(accountNumero)
-                .customer(byNumero.getCustomer()).build();
+    public Account depose(Amount deposit, Account account) {
+        Account accountToUpdate = Account.builder().id(account.getId())
+                .solde(account.getSolde() + deposit.getValue())
+                .numero(account.getNumero())
+                .customer(account.getCustomer()).build();
 
         return accountRepository.save(accountToUpdate);
+    }
+
+    public Optional<Account> fetchByNumero(String accountNumero) {
+        return Optional.of(accountRepository.findByNumero(accountNumero));
     }
 }

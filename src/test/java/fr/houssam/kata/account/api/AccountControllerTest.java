@@ -14,6 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Optional;
+
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -32,6 +34,8 @@ public class AccountControllerTest {
     @MockBean
     private AccountService accountService;
 
+    private ObjectMapper mapper = new ObjectMapper();
+
     @Test
     public void should_make_deposit_by_account_numero() throws Exception {
         Account account = Account.builder()
@@ -42,8 +46,8 @@ public class AccountControllerTest {
                 .solde(1050L)
                 .numero("1000236").build();
         Amount amount = new Amount(50L);
-        doReturn(account).when(accountService).depose(amount, "1000236");
-        ObjectMapper mapper = new ObjectMapper();
+        doReturn(account).when(accountService).depose(amount, account);
+        doReturn(Optional.of(account)).when(accountService).fetchByNumero("1000236");
 
         mockMvc.perform(put("/api/accounts/1000236")
                 .content(mapper.writeValueAsString(amount))
@@ -55,6 +59,6 @@ public class AccountControllerTest {
                         )
                 );
 
-        verify(accountService, times(1)).depose(amount, "1000236");
+        verify(accountService, times(1)).depose(amount, account);
     }
 }

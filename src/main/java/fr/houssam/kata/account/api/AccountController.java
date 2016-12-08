@@ -3,6 +3,7 @@ package fr.houssam.kata.account.api;
 import fr.houssam.kata.account.business.AccountService;
 import fr.houssam.kata.account.domain.Account;
 import fr.houssam.kata.account.domain.Amount;
+import fr.houssam.kata.exception.AccountNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,9 @@ public class AccountController {
 
     @RequestMapping(method = RequestMethod.PUT, path = "/api/accounts/{accountNumero}")
     public Account update(@PathVariable String accountNumero, @RequestBody Amount amount) {
-        return accountService.depose(amount, accountNumero);
+        Account account = accountService.fetchByNumero(accountNumero)
+                .orElseThrow(() -> new AccountNotFoundException("Account not found, please check your account numero"));
+
+        return accountService.depose(amount, account);
     }
 }
