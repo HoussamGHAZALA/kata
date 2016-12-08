@@ -24,4 +24,6 @@ public class Account {
 
     @NotNull
     private String numero;
+
+    private long amount;
 }

@@ -27,7 +27,9 @@ public class AccountRepositoryTest {
     @Before
     public void init() {
         expected = Account.builder()
-                .numero("11005BC589").build();
+                .numero("11005BC589")
+                .amount(500L)
+                .build();
         testEntityManager.persist(expected);
     }
 
