@@ -58,9 +58,9 @@ public class AccountRepositoryTest {
 
     @Test
     public void should_add_deposit_in_account_numero() throws Exception {
-        Account accountWithNewSolde = Account.builder().id(expectedAccount.getId())
-                .customer(expectedAccount.getCustomer())
-                .numero(expectedAccount.getNumero())
+        Account accountWithNewSolde = Account.builder().id(1L)
+                .customer(customer)
+                .numero("11005BC589")
                 .solde(950L)
                 .build();
 

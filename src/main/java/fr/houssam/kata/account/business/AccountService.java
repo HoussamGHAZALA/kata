@@ -14,15 +14,14 @@ public class AccountService {
     @Autowired
     private AccountRepository accountRepository;
 
-    public void depose(long deposit, String accountNumero) {
+    public Account depose(long deposit, String accountNumero) {
         Account byNumero = accountRepository.findByNumero(accountNumero);
-        Long newSolde = byNumero.getSolde() + deposit;
 
         Account accountToUpdate = Account.builder().id(byNumero.getId())
-                .solde(newSolde)
+                .solde(byNumero.getSolde() + deposit)
                 .numero(accountNumero)
                 .customer(byNumero.getCustomer()).build();
 
-        accountRepository.save(accountToUpdate);
+        return accountRepository.save(accountToUpdate);
     }
 }

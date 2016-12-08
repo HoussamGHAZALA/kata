@@ -9,22 +9,19 @@ import javax.validation.constraints.NotNull;
  * Created by ghazala on 30/11/16.
  */
 @Entity
-@Table
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class Account {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private final Long id;
 
     @NotNull
-    private String numero;
+    private final String numero;
 
-    private long solde;
+    private final long solde;
 
     @OneToOne(fetch = FetchType.LAZY)
-    private Customer customer;
+    private final Customer customer;
 }
