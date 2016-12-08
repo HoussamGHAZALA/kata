@@ -1,6 +1,7 @@
 package fr.houssam.kata.account.domain;
 
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 import lombok.Value;
 
 /**
@@ -8,6 +9,7 @@ import lombok.Value;
  */
 @Value
 @Builder
+@NoArgsConstructor(force = true)
 public class Amount {
     private long value;
 
