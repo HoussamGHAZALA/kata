@@ -23,19 +23,19 @@ public class AccountRepositoryTest {
     private AccountRepository accountRepository;
     @Autowired
     private TestEntityManager testEntityManager;
-    private Account expected;
+    private Account expectedAccount;
     private Customer customer;
 
     @Before
     public void init() {
         customer = Customer.builder().nom("TOTO").prenom("TATA").build();
-        expected = Account.builder()
+        expectedAccount = Account.builder()
                 .numero("11005BC589")
-                .amount(500L)
+                .solde(500L)
                 .customer(customer)
                 .build();
         testEntityManager.persist(customer);
-        testEntityManager.persist(expected);
+        testEntityManager.persist(expectedAccount);
     }
 
     @Test
@@ -44,7 +44,7 @@ public class AccountRepositoryTest {
 
         assertThat(resulting)
                 .isNotNull()
-                .isEqualToComparingFieldByField(expected);
+                .isEqualToComparingFieldByField(expectedAccount);
     }
 
     @Test
@@ -53,6 +53,21 @@ public class AccountRepositoryTest {
 
         assertThat(resulting)
                 .isNotNull()
-                .isEqualToComparingFieldByField(expected);
+                .isEqualToComparingFieldByField(expectedAccount);
+    }
+
+    @Test
+    public void should_add_deposit_in_account_numero() throws Exception {
+        Account accountWithNewSolde = Account.builder().id(expectedAccount.getId())
+                .customer(expectedAccount.getCustomer())
+                .numero(expectedAccount.getNumero())
+                .solde(950L)
+                .build();
+
+        accountRepository.save(accountWithNewSolde);
+
+        assertThat(testEntityManager.find(Account.class, 1L)
+                .getSolde())
+                .isEqualTo(950L);
     }
 }
