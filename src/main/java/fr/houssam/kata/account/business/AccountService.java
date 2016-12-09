@@ -3,6 +3,7 @@ package fr.houssam.kata.account.business;
 import fr.houssam.kata.account.domain.Account;
 import fr.houssam.kata.account.domain.Amount;
 import fr.houssam.kata.account.repository.AccountRepository;
+import fr.houssam.kata.exception.SoldeInsuffisantException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,9 @@ public class AccountService {
     }
 
     public Account withdraw(Amount amountWithdraw, Account account) {
+        if(amountWithdraw.getValue() > account.getSolde()) {
+            throw new SoldeInsuffisantException("Votre solde est insuffisant, l'opération est annulée.");
+        }
         Account accountToUpdate = Account.builder().id(account.getId())
                 .solde(account.getSolde() - amountWithdraw.getValue())
                 .numero(account.getNumero())
