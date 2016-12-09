@@ -31,6 +31,11 @@ public class AccountService {
     }
 
     public Account withdraw(Amount amountWithdraw, Account account) {
-        return null;
+        Account accountToUpdate = Account.builder().id(account.getId())
+                .solde(account.getSolde() - amountWithdraw.getValue())
+                .numero(account.getNumero())
+                .customer(account.getCustomer()).build();
+
+        return accountRepository.save(accountToUpdate);
     }
 }
