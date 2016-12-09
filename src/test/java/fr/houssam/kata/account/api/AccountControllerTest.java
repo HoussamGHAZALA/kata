@@ -49,7 +49,7 @@ public class AccountControllerTest {
         doReturn(account).when(accountService).depose(amount, account);
         doReturn(Optional.of(account)).when(accountService).fetchByNumero("1000236");
 
-        mockMvc.perform(put("/api/accounts/1000236")
+        mockMvc.perform(put("/api/accounts/1000236/operations/deposit/")
                 .content(mapper.writeValueAsString(amount))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
@@ -60,5 +60,10 @@ public class AccountControllerTest {
                 );
 
         verify(accountService, times(1)).depose(amount, account);
+    }
+
+    @Test
+    public void should_make_withdraw_by_account_numero() throws Exception {
+
     }
 }

@@ -20,8 +20,8 @@ public class AccountController {
         this.accountService = accountService;
     }
 
-    @RequestMapping(method = RequestMethod.PUT, path = "/api/accounts/{accountNumero}")
-    public Account update(@PathVariable String accountNumero, @RequestBody Amount amount) {
+    @RequestMapping(method = RequestMethod.PUT, path = "/api/accounts/{accountNumero}/operations/{operationType}")
+    public Account update(@PathVariable String accountNumero, @PathVariable String operationType, @RequestBody Amount amount) {
         Account account = accountService.fetchByNumero(accountNumero)
                 .orElseThrow(() -> new AccountNotFoundException("Account not found, please check your account numero"));
 
