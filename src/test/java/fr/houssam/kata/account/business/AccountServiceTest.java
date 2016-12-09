@@ -66,4 +66,17 @@ public class AccountServiceTest {
 
         assertThat(resultingAccount).isEqualToComparingFieldByField(account);
     }
+
+    @Test
+    public void should_withdraw_from_account() throws Exception {
+        Customer custom = Customer.builder().id(1L).build();
+        Account account = Account.builder()
+                .id(1L)
+                .numero("1000555")
+                .customer(custom)
+                .solde(1000L)
+                .build();
+        accountService.withdraw(new Amount(500L), account);
+
+    }
 }

@@ -29,4 +29,9 @@ public class AccountService {
     public Optional<Account> fetchByNumero(String accountNumero) {
         return Optional.of(accountRepository.findByNumero(accountNumero));
     }
+
+    public Account withdraw(Amount amountWithdraw, Account account) {
+
+        return null;
+    }
 }
