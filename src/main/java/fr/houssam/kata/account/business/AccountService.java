@@ -31,7 +31,6 @@ public class AccountService {
     }
 
     public Account withdraw(Amount amountWithdraw, Account account) {
-
         return null;
     }
 }

@@ -76,7 +76,18 @@ public class AccountServiceTest {
                 .customer(custom)
                 .solde(1000L)
                 .build();
-        accountService.withdraw(new Amount(500L), account);
+        Account updatedAccount = Account.builder()
+                .id(1L)
+                .numero("1000555")
+                .customer(custom)
+                .solde(500L)
+                .build();
 
+        doReturn(updatedAccount).when(accountRepository).save(updatedAccount);
+
+        Account accountWithNewDeposit = accountService.withdraw(new Amount(100L), account);
+
+        verify(accountRepository, times(1)).save(Mockito.any(Account.class));
+        assertThat(accountWithNewDeposit).isEqualToComparingFieldByField(updatedAccount);
     }
 }
