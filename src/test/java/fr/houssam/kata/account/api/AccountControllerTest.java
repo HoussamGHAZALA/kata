@@ -49,7 +49,7 @@ public class AccountControllerTest {
         doReturn(account).when(accountService).depose(amount, account);
         doReturn(Optional.of(account)).when(accountService).fetchByNumero("1000236");
 
-        mockMvc.perform(put("/api/accounts/1000236")
+        mockMvc.perform(put("/api/accounts/1000236/operations/DEPOSIT/")
                 .content(mapper.writeValueAsString(amount))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
@@ -60,5 +60,31 @@ public class AccountControllerTest {
                 );
 
         verify(accountService, times(1)).depose(amount, account);
+    }
+
+    @Test
+    public void should_make_withdraw_by_account_numero() throws Exception {
+        Account account = Account.builder()
+                .id(1L)
+                .customer(Customer.builder()
+                        .id(1L).build()
+                )
+                .solde(1000L)
+                .numero("1000236").build();
+        Amount amount = new Amount(50L);
+        doReturn(account).when(accountService).withdraw(amount, account);
+        doReturn(Optional.of(account)).when(accountService).fetchByNumero("1000236");
+
+        mockMvc.perform(put("/api/accounts/1000236/operations/WITHDRAWL/")
+                .content(mapper.writeValueAsString(amount))
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andExpect(content()
+                        .json(
+                                "{'id':1, 'customer': {'id':1}, 'solde': 1000, 'numero': '1000236'}"
+                        )
+                );
+
+        verify(accountService, times(1)).withdraw(amount, account);
     }
 }
