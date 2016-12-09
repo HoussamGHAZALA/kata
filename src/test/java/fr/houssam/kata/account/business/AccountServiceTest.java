@@ -9,13 +9,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static fr.houssam.kata.account.domain.OperationType.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
 
 /**
  * Created by ghazala on 30/11/16.
@@ -31,66 +31,47 @@ public class AccountServiceTest {
     private AccountService accountService;
 
     @Test
-    public void should_make_a_deposit_in_a_given_account() {
-        Customer custom = Customer.builder().id(1L).build();
-        Account initialAccount = Account.builder()
-                .id(1L)
-                .numero("10025135")
-                .customer(custom)
-                .solde(1000L)
-                .build();
-        Account updatedAccount = Account.builder()
-                .id(1L)
-                .numero("10025135")
-                .customer(custom)
-                .solde(1100L)
-                .build();
-        doReturn(updatedAccount).when(accountRepository).save(updatedAccount);
-
-        Account accountWithNewDeposit = accountService.depose(new Amount(100L), initialAccount);
-
-        verify(accountRepository, times(1)).save(Mockito.any(Account.class));
-        assertThat(accountWithNewDeposit).isEqualToComparingFieldByField(updatedAccount);
-    }
-
-    @Test
-    public void should_fetch_account_by_numero() {
+    public void should_update_account_solde_deposit_case() {
         Customer custom = Customer.builder().id(1L).build();
         Account account = Account.builder()
                 .id(1L)
                 .numero("1000555")
                 .customer(custom)
-                .solde(1000L)
-                .build();
+                .solde(1000L).build();
+        Account updatedAccount = Account.builder()
+                .id(1L)
+                .numero("1000555")
+                .customer(custom)
+                .solde(1100L).build();
+        Amount amount = new Amount(100L);
         doReturn(account).when(accountRepository).findByNumero("1000555");
+        doReturn(updatedAccount).when(accountRepository).save(updatedAccount);
 
-        Account resultingAccount = accountService.fetchByNumero("1000555").get();
+        Account result = accountService.updateSolde(amount, "1000555", DEPOSIT);
 
-        assertThat(resultingAccount).isEqualToComparingFieldByField(account);
+        assertThat(result).isEqualToComparingFieldByField(updatedAccount);
     }
 
     @Test
-    public void should_withdraw_from_account() {
+    public void should_update_account_solde_withdrawl_case() {
         Customer custom = Customer.builder().id(1L).build();
         Account account = Account.builder()
                 .id(1L)
                 .numero("1000555")
                 .customer(custom)
-                .solde(1000L)
-                .build();
+                .solde(1000L).build();
         Account updatedAccount = Account.builder()
                 .id(1L)
                 .numero("1000555")
                 .customer(custom)
-                .solde(500L)
-                .build();
-
+                .solde(900L).build();
+        Amount amount = new Amount(100L);
+        doReturn(account).when(accountRepository).findByNumero("1000555");
         doReturn(updatedAccount).when(accountRepository).save(updatedAccount);
 
-        Account accountWithNewDeposit = accountService.withdraw(new Amount(500L), account);
+        Account result = accountService.updateSolde(amount, "1000555", WITHDRAWL);
 
-        verify(accountRepository, times(1)).save(Mockito.any(Account.class));
-        assertThat(accountWithNewDeposit).isEqualToComparingFieldByField(updatedAccount);
+        assertThat(result).isEqualToComparingFieldByField(updatedAccount);
     }
 
     @Test
@@ -100,10 +81,10 @@ public class AccountServiceTest {
                 .id(1L)
                 .numero("1000555")
                 .customer(custom)
-                .solde(1000L)
-                .build();
+                .solde(1000L).build();
+        doReturn(account).when(accountRepository).findByNumero("1000555");
 
-        assertThatThrownBy(() -> accountService.withdraw(new Amount(1001L), account))
+        assertThatThrownBy(() -> accountService.updateSolde(new Amount(1100L), "1000555", WITHDRAWL))
                 .isInstanceOf(SoldeInsuffisantException.class);
     }
 }
