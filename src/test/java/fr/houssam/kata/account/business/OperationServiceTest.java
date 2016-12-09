@@ -12,10 +12,10 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.google.common.collect.ImmutableList.of;
 import static fr.houssam.kata.account.domain.OperationType.DEPOSIT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
@@ -60,10 +60,7 @@ public class OperationServiceTest {
 
     @Test
     public void should_fetch_all_operations_by_account() throws Exception {
-        List<Operation> opes = new ArrayList<Operation>();
-        opes.add(depot);
-        opes.add(retrait);
-        doReturn(opes).when(operationRepository).findByAccount(account);
+        doReturn(of(depot, retrait)).when(operationRepository).findByAccount(account);
 
         List<Operation> operations = operationService.fetchBy(account);
 
