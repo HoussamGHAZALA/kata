@@ -12,6 +12,8 @@ import java.util.List;
 @Entity
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor(force = true)
 public class Account {
 
     @Id
