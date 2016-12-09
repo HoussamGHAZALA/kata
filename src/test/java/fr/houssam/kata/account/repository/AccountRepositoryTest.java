@@ -10,6 +10,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.persistence.Query;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -36,6 +38,7 @@ public class AccountRepositoryTest {
                 .build();
         testEntityManager.persist(customer);
         testEntityManager.persist(expectedAccount);
+
     }
 
     @Test
@@ -49,15 +52,19 @@ public class AccountRepositoryTest {
 
     @Test
     public void should_add_deposit_in_account_numero() throws Exception {
-        Account accountWithNewSolde = Account.builder().id(1L)
+        Account accountWithNewSolde = Account.builder()
                 .customer(customer)
-                .numero("11005BC589")
+                .numero("11005BC599")
                 .solde(950L)
                 .build();
 
-        accountRepository.save(accountWithNewSolde);
+        accountRepository.saveAndFlush(accountWithNewSolde);
 
-        assertThat(testEntityManager.find(Account.class, 1L)
+        Account actual = (Account) testEntityManager.getEntityManager()
+                .createQuery("SELECT OBJECT(account) FROM Account account WHERE numero = '11005BC599' ")
+                .getSingleResult();
+
+        assertThat(actual
                 .getSolde())
                 .isEqualTo(950L);
     }
