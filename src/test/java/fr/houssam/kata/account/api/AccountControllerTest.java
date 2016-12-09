@@ -18,12 +18,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Date;
-import java.util.Optional;
 
 import static com.google.common.collect.ImmutableList.of;
 import static fr.houssam.kata.account.domain.OperationType.DEPOSIT;
 import static fr.houssam.kata.account.domain.OperationType.WITHDRAWL;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -46,38 +45,45 @@ public class AccountControllerTest {
 
     private ObjectMapper mapper = new ObjectMapper();
     private Amount amount;
-    private Account account;
+    private Account accountWithdraw;
+    private Account accountDeposit;
     private Operation depot;
     private Operation retrait;
 
     @Before
     public void init() {
         amount = new Amount(50L);
-        account = Account.builder()
+        accountWithdraw = Account.builder()
                 .id(1L)
                 .customer(Customer.builder()
                         .id(1L).build()
                 )
                 .solde(1050)
                 .numero("1000236").build();
+        accountDeposit = Account.builder()
+                .id(1L)
+                .customer(Customer.builder()
+                        .id(1L).build()
+                )
+                .solde(1100)
+                .numero("1000236").build();
         depot = Operation.builder()
                 .id(1L)
                 .amount(50L)
                 .date(new Date(1111L))
-                .account(account)
+                .account(accountWithdraw)
                 .operationType(DEPOSIT).build();
         retrait = Operation.builder()
                 .id(2L)
                 .amount(300L)
                 .date(new Date(22222L))
-                .account(account)
+                .account(accountWithdraw)
                 .operationType(WITHDRAWL).build();
     }
 
     @Test
     public void should_make_deposit_by_account_numero() throws Exception {
-        doReturn(account).when(accountService).depose(amount, account);
-        doReturn(Optional.of(account)).when(accountService).fetchByNumero("1000236");
+        doReturn(accountDeposit).when(accountService).updateSolde(amount, "1000236", DEPOSIT);
 
         mockMvc.perform(put("/api/accounts/1000236/operations/DEPOSIT/")
                 .content(mapper.writeValueAsString(amount))
@@ -85,17 +91,14 @@ public class AccountControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content()
                         .json(
-                                "{'id':1, 'customer': {'id':1}, 'solde': 1050, 'numero': '1000236'}"
+                                "{'id':1, 'customer': {'id':1}, 'solde': 1100, 'numero': '1000236', operations:null}"
                         )
                 );
-
-        verify(accountService, times(1)).depose(amount, account);
     }
 
     @Test
     public void should_make_withdraw_by_account_numero() throws Exception {
-        doReturn(account).when(accountService).withdraw(amount, account);
-        doReturn(Optional.of(account)).when(accountService).fetchByNumero("1000236");
+        doReturn(accountWithdraw).when(accountService).updateSolde(amount, "1000236", WITHDRAWL);
 
         mockMvc.perform(put("/api/accounts/1000236/operations/WITHDRAWL/")
                 .content(mapper.writeValueAsString(amount))
@@ -106,8 +109,6 @@ public class AccountControllerTest {
                                 "{'id':1, 'customer': {'id':1}, 'solde': 1050, 'numero': '1000236'}"
                         )
                 );
-
-        verify(accountService, times(1)).withdraw(amount, account);
     }
 
     @Test
