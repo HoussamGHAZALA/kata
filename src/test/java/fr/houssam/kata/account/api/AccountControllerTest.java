@@ -5,6 +5,7 @@ import fr.houssam.kata.account.business.AccountService;
 import fr.houssam.kata.account.domain.Account;
 import fr.houssam.kata.account.domain.Amount;
 import fr.houssam.kata.account.domain.Customer;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,17 +36,23 @@ public class AccountControllerTest {
     private AccountService accountService;
 
     private ObjectMapper mapper = new ObjectMapper();
+    private Amount amount;
+    private Account account;
 
-    @Test
-    public void should_make_deposit_by_account_numero() throws Exception {
-        Account account = Account.builder()
+    @Before
+    public void init() {
+        amount = new Amount(50L);
+        account = Account.builder()
                 .id(1L)
                 .customer(Customer.builder()
                         .id(1L).build()
                 )
-                .solde(1050L)
+                .solde(1050)
                 .numero("1000236").build();
-        Amount amount = new Amount(50L);
+    }
+
+    @Test
+    public void should_make_deposit_by_account_numero() throws Exception {
         doReturn(account).when(accountService).depose(amount, account);
         doReturn(Optional.of(account)).when(accountService).fetchByNumero("1000236");
 
@@ -64,14 +71,6 @@ public class AccountControllerTest {
 
     @Test
     public void should_make_withdraw_by_account_numero() throws Exception {
-        Account account = Account.builder()
-                .id(1L)
-                .customer(Customer.builder()
-                        .id(1L).build()
-                )
-                .solde(1000L)
-                .numero("1000236").build();
-        Amount amount = new Amount(50L);
         doReturn(account).when(accountService).withdraw(amount, account);
         doReturn(Optional.of(account)).when(accountService).fetchByNumero("1000236");
 
@@ -81,7 +80,7 @@ public class AccountControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content()
                         .json(
-                                "{'id':1, 'customer': {'id':1}, 'solde': 1000, 'numero': '1000236'}"
+                                "{'id':1, 'customer': {'id':1}, 'solde': 1050, 'numero': '1000236'}"
                         )
                 );
 
