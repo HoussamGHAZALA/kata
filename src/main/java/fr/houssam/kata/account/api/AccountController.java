@@ -3,10 +3,13 @@ package fr.houssam.kata.account.api;
 import fr.houssam.kata.account.business.AccountService;
 import fr.houssam.kata.account.domain.Account;
 import fr.houssam.kata.account.domain.Amount;
+import fr.houssam.kata.account.domain.Operation;
 import fr.houssam.kata.account.domain.OperationType;
 import fr.houssam.kata.exception.AccountNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Created by ghazala on 30/11/16.
@@ -32,5 +35,8 @@ public class AccountController {
         throw new IllegalArgumentException("Le type d'opération donné ne correspondant à aucun type.");
     }
 
-
+    @RequestMapping(method = RequestMethod.GET, path = "/api/accounts/{accountNumero}/history")
+    public List<Operation> getAccountHistory(@PathVariable String accountNumero) {
+        return null;
+    }
 }
