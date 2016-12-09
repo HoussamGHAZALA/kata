@@ -2,9 +2,11 @@ package fr.houssam.kata.account.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.houssam.kata.account.business.AccountService;
+import fr.houssam.kata.account.business.OperationService;
 import fr.houssam.kata.account.domain.Account;
 import fr.houssam.kata.account.domain.Amount;
 import fr.houssam.kata.account.domain.Customer;
+import fr.houssam.kata.account.domain.Operation;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,8 +17,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Date;
 import java.util.Optional;
 
+import static com.google.common.collect.ImmutableList.of;
+import static fr.houssam.kata.account.domain.OperationType.DEPOSIT;
+import static fr.houssam.kata.account.domain.OperationType.WITHDRAWL;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -35,10 +41,14 @@ public class AccountControllerTest {
 
     @MockBean
     private AccountService accountService;
+    @MockBean
+    private OperationService operationService;
 
     private ObjectMapper mapper = new ObjectMapper();
     private Amount amount;
     private Account account;
+    private Operation depot;
+    private Operation retrait;
 
     @Before
     public void init() {
@@ -50,6 +60,18 @@ public class AccountControllerTest {
                 )
                 .solde(1050)
                 .numero("1000236").build();
+        depot = Operation.builder()
+                .id(1L)
+                .amount(50L)
+                .date(new Date(1111L))
+                .account(account)
+                .operationType(DEPOSIT).build();
+        retrait = Operation.builder()
+                .id(2L)
+                .amount(300L)
+                .date(new Date(22222L))
+                .account(account)
+                .operationType(WITHDRAWL).build();
     }
 
     @Test
@@ -90,8 +112,15 @@ public class AccountControllerTest {
 
     @Test
     public void should_fetch_all_account_history() throws Exception {
+        doReturn(of(depot, retrait)).when(operationService).fetchBy("1000236");
+
         mockMvc.perform(get("/api/accounts/1000236/history/")
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+        .andExpect(content()
+            .json("[{'id':1, date:1111, amount:50, operationType:'DEPOSIT', account:{id:1}}," +
+                  " {'id':2, date:22222, amount:300, operationType:'WITHDRAWL', account:{id:1}}" +
+                  "]")
+        );
     }
 }

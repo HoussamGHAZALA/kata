@@ -3,6 +3,7 @@ package fr.houssam.kata.account.business;
 import fr.houssam.kata.account.domain.Account;
 import fr.houssam.kata.account.domain.Customer;
 import fr.houssam.kata.account.domain.Operation;
+import fr.houssam.kata.account.repository.AccountRepository;
 import fr.houssam.kata.account.repository.OperationRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +29,8 @@ public class OperationServiceTest {
 
     @Mock
     private OperationRepository operationRepository;
+    @Mock
+    private AccountRepository accountRepository;
 
     @Spy
     @InjectMocks
@@ -61,8 +64,9 @@ public class OperationServiceTest {
     @Test
     public void should_fetch_all_operations_by_account() throws Exception {
         doReturn(of(depot, retrait)).when(operationRepository).findByAccount(account);
+        doReturn(account).when(accountRepository).findByNumero("11005BC589");
 
-        List<Operation> operations = operationService.fetchBy(account);
+        List<Operation> operations = operationService.fetchBy("11005BC589");
 
         assertThat(operations).isNotNull()
                 .isNotEmpty()

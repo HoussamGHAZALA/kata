@@ -48,15 +48,6 @@ public class AccountRepositoryTest {
     }
 
     @Test
-    public void should_fetch_account_by_customer() {
-        Account resulting = accountRepository.findByCustomer(customer);
-
-        assertThat(resulting)
-                .isNotNull()
-                .isEqualToComparingFieldByField(expectedAccount);
-    }
-
-    @Test
     public void should_add_deposit_in_account_numero() throws Exception {
         Account accountWithNewSolde = Account.builder().id(1L)
                 .customer(customer)

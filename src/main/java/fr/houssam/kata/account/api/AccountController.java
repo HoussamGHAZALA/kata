@@ -1,6 +1,7 @@
 package fr.houssam.kata.account.api;
 
 import fr.houssam.kata.account.business.AccountService;
+import fr.houssam.kata.account.business.OperationService;
 import fr.houssam.kata.account.domain.Account;
 import fr.houssam.kata.account.domain.Amount;
 import fr.houssam.kata.account.domain.Operation;
@@ -20,6 +21,9 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
+    @Autowired
+    private OperationService operationService;
+
     public AccountController(AccountService accountService) {
         this.accountService = accountService;
     }
@@ -37,6 +41,6 @@ public class AccountController {
 
     @RequestMapping(method = RequestMethod.GET, path = "/api/accounts/{accountNumero}/history")
     public List<Operation> getAccountHistory(@PathVariable String accountNumero) {
-        return null;
+        return operationService.fetchBy(accountNumero);
     }
 }
